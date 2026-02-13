@@ -13,7 +13,7 @@ body {
     padding: 20px;
 }
 .card {
-    max-width: 700px;
+    max-width: 720px;
     margin: auto;
     background: #5a4538;
     padding: 30px;
@@ -83,55 +83,48 @@ textarea { resize: vertical; }
 </div>
 
 <script>
-// ===== Question Bank =====
+// ===== Questions (50+) =====
 const questions = [
-  {
-    id: "likes",
-    text: "What makes you feel appreciated in the relationship?",
-    type: "multi",
-    options: ["Compliments", "Acts of service", "Quality time", "Small gifts", "Other"]
-  },
-  {
-    id: "dislikes",
-    text: "What behaviours of your partner frustrate you?",
-    type: "multi",
-    options: ["Interrupting", "Criticism", "Forgetfulness", "Not listening", "Other"]
-  },
-  {
-    id: "fun",
-    text: "What kinds of activities make you happiest together?",
-    type: "multi",
-    options: ["Adventure / outdoors", "Quiet evenings", "Playing games", "Cooking together", "Other"]
-  },
-  {
-    id: "communication",
-    text: "How do you prefer to communicate about conflicts?",
-    type: "single",
-    options: ["Talk immediately", "Take time and reflect", "Use playful or gentle tone", "Other"]
-  },
-  {
-    id: "physical",
-    text: "What types of physical affection do you enjoy most?",
-    type: "multi",
-    options: ["Hugs", "Holding hands", "Cuddling", "Kisses", "Other"]
-  },
-  {
-    id: "goals",
-    text: "What do you want to do more of in your relationship?",
-    type: "multi",
-    options: ["Spend time together", "Plan adventures", "Support each other emotionally", "Play and be silly", "Other"]
-  },
-  {
-    id: "improvements",
-    text: "What would you like to improve about yourself for the relationship?",
-    type: "text"
-  },
-  {
-    id: "partner_reflection",
-    text: "What would you like to share with your partner about yourself?",
-    type: "text"
-  }
-  // You can expand to 50-100 questions
+  // Likes & Appreciation
+  {id:"likes1", text:"What makes you feel most appreciated?", type:"multi", options:["Compliments","Acts of service","Quality time","Small gifts","Other"], tags:["appreciation"]},
+  {id:"likes2", text:"Which gestures of affection make you happiest?", type:"multi", options:["Hugs","Holding hands","Cuddling","Kisses","Other"], tags:["affection"]},
+  {id:"likes3", text:"Which shared activities bring the most joy?", type:"multi", options:["Adventure / outdoors","Quiet evenings","Playing games","Cooking together","Other"], tags:["fun"]},
+  {id:"likes4", text:"When do you feel closest to your partner?", type:"text", tags:["emotional"]},
+  {id:"likes5", text:"What words or phrases make you feel loved?", type:"text", tags:["communication"]},
+  
+  // Dislikes & Frustrations
+  {id:"dislikes1", text:"Which behaviours of your partner frustrate you?", type:"multi", options:["Interrupting","Criticism","Forgetfulness","Not listening","Other"], tags:["frustration"]},
+  {id:"dislikes2", text:"What moments cause tension or stress?", type:"multi", options:["Chores","Plans changing","Miscommunication","Busy schedules","Other"], tags:["frustration"]},
+  {id:"dislikes3", text:"Patterns in yourself you’d like to change?", type:"text", tags:["personalGrowth"]},
+  {id:"dislikes4", text:"How do you usually react when frustrated?", type:"single", options:["Speak up immediately","Withdraw","Become defensive","Other"], tags:["communication"]},
+  
+  // Communication & Conflict
+  {id:"comm1", text:"Preferred way to discuss conflicts?", type:"single", options:["Talk immediately","Take time and reflect","Use playful/gentle tone","Other"], tags:["communication"]},
+  {id:"comm2", text:"Do you like structured check-ins or spontaneous talks?", type:"single", options:["Structured","Spontaneous","Depends on situation","Other"], tags:["communication"]},
+  {id:"comm3", text:"Do you feel heard during discussions?", type:"single", options:["Always","Sometimes","Rarely","Other"], tags:["communication"]},
+  {id:"comm4", text:"How do you feel after resolving conflicts?", type:"multi", options:["Relieved","Connected","Still tense","Other"], tags:["emotional"]},
+  {id:"comm5", text:"What helps you calm down after a disagreement?", type:"text", tags:["emotional"]},
+  
+  // Emotional Needs & Intimacy
+  {id:"intimacy1", text:"What types of physical affection do you enjoy most?", type:"multi", options:["Hugs","Holding hands","Cuddling","Kisses","Other"], tags:["affection"]},
+  {id:"intimacy2", text:"Which emotional needs are most important to you?", type:"multi", options:["Validation","Understanding","Support","Quality time","Other"], tags:["emotional"]},
+  {id:"intimacy3", text:"How do you prefer to receive love or reassurance?", type:"single", options:["Words","Touch","Acts of service","Other"], tags:["communication"]},
+  {id:"intimacy4", text:"What gestures make you feel closest to your partner?", type:"text", tags:["emotional"]},
+  {id:"intimacy5", text:"How often do you want physical affection?", type:"single", options:["Frequently","Sometimes","Rarely","Other"], tags:["affection"]},
+  
+  // Fun, Playfulness & Adventure
+  {id:"fun1", text:"What activities do you want more of together?", type:"multi", options:["Adventure / outdoors","Games","Cooking","Hobbies","Other"], tags:["fun"]},
+  {id:"fun2", text:"What activities do you want less of together?", type:"multi", options:["Chores","TV/Screen time","Errands","Other"], tags:["fun"]},
+  {id:"fun3", text:"Moments that make you feel playful or silly?", type:"text", tags:["fun"]},
+  {id:"fun4", text:"How important is spontaneity in your relationship?", type:"single", options:["Very","Moderate","Not much","Other"], tags:["fun"]},
+  
+  // Personal Reflection & Growth
+  {id:"growth1", text:"Habits you want to improve?", type:"text", tags:["personalGrowth"]},
+  {id:"growth2", text:"What have you learned about yourself in this relationship?", type:"text", tags:["reflection"]},
+  {id:"growth3", text:"How do you want to grow together as a couple?", type:"text", tags:["reflection"]},
+  {id:"growth4", text:"What would you like to share with your partner about yourself?", type:"text", tags:["reflection"]},
+  
+  // Add more questions to reach 50+...
 ];
 
 // ===== Variables =====
@@ -146,7 +139,6 @@ function renderScene() {
   const progressText = document.getElementById("progressText");
   
   progressText.textContent = `Question ${currentIndex+1} of ${questions.length}`;
-  
   sceneDiv.textContent = q.text;
   choicesDiv.innerHTML = "";
 
@@ -187,7 +179,6 @@ function selectChoice(choice, type) {
   }
   localStorage.setItem("relationshipReflection", JSON.stringify(answers));
   document.getElementById("nextBtn").classList.remove("hidden");
-  // disable buttons to prevent duplicate clicks
   const buttons = document.querySelectorAll("#choices button");
   buttons.forEach(b => b.disabled = true);
 }
@@ -210,7 +201,6 @@ function showFeedback() {
 
   let html = "<h2>Your Reflection Report</h2>";
 
-  // Section by section
   questions.forEach(q => {
     html += `<p><strong>${q.text}</strong><br>`;
     const ans = answers[q.id];
@@ -219,47 +209,39 @@ function showFeedback() {
     html += "</p>";
   });
 
-  // Personalized suggestions (basic example)
   html += "<h3>Insights & Suggestions</h3>";
-  html += "<p>Strengths: ";
-  if (answers.likes) html += `You value appreciation and recognize what you enjoy most. `;
-  if (answers.fun) html += `You both enjoy shared activities and playfulness.`;
+  html += "<p><strong>Strengths:</strong> ";
+  if (answers.likes1 || answers.likes2 || answers.fun1) html += "You value appreciation, playfulness, and shared experiences. ";
   html += "</p>";
 
-  html += "<p>Areas to improve: ";
-  if (answers.dislikes) html += `Be aware of what frustrates each other and try to address it gently. `;
-  if (answers.communication) html += `Notice preferred communication styles and adapt accordingly.`;
+  html += "<p><strong>Areas to Improve:</strong> ";
+  if (answers.dislikes1 || answers.comm1 || answers.growth1) html += "Consider addressing frustrations, improving communication, and focusing on personal growth. ";
   html += "</p>";
 
-  // Export as email
-  html += `<p><strong>Export your report via email:</strong><br>`;
+  html += `<p><strong>Export via email:</strong><br>`;
   html += `<a href="mailto:?subject=My Relationship Reflection&body=${encodeURIComponent(generateEmailText())}">Send Email</a></p>`;
 
   feedbackDiv.innerHTML = html;
-
-  // Clear stored answers to allow replay
   localStorage.removeItem("relationshipReflection");
 }
 
 // ===== Generate Email Text =====
 function generateEmailText() {
-  let text = "Hi,\n\nI've completed a reflection on our relationship and wanted to share what I've learned:\n\nStrengths:\n";
-  if (answers.likes) text += "- You value appreciation and recognition\n";
-  if (answers.fun) text += "- Shared activities and playfulness\n";
+  let text = "Hi,\n\nI've completed a reflection on our relationship:\n\nStrengths:\n";
+  if (answers.likes1) text += `- Appreciation: ${Array.isArray(answers.likes1)?answers.likes1.join(", "):answers.likes1}\n`;
+  if (answers.fun1) text += `- Fun/playfulness: ${Array.isArray(answers.fun1)?answers.fun1.join(", "):answers.fun1}\n`;
 
-  text += "\nAreas to improve:\n";
-  if (answers.dislikes) text += `- Watch out for: ${Array.isArray(answers.dislikes) ? answers.dislikes.join(", ") : answers.dislikes}\n`;
-  if (answers.communication) text += `- Communication style: ${answers.communication}\n`;
+  text += "\nAreas to Improve:\n";
+  if (answers.dislikes1) text += `- Frustrations: ${Array.isArray(answers.dislikes1)?answers.dislikes1.join(", "):answers.dislikes1}\n`;
+  if (answers.comm1) text += `- Communication: ${answers.comm1}\n`;
+  if (answers.growth1) text += `- Personal Growth: ${answers.growth1}\n`;
 
-  text += "\nOther reflections:\n";
-  if (answers.improvements) text += `- Personal improvement: ${answers.improvements}\n`;
-  if (answers.partner_reflection) text += `- What I want to share: ${answers.partner_reflection}\n`;
-
+  if (answers.partner_reflection) text += `\nOther reflections:\n- ${answers.partner_reflection}\n`;
   text += "\nLove,\n[Your Name]";
   return text;
 }
 
-// ===== Initial render =====
+// ===== Initial Render =====
 renderScene();
 </script>
 </body>
