@@ -2,195 +2,180 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Goblin Chaos Adventure</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Adventurous Journal</title>
 <style>
-body{
-  margin:0;
-  font-family:-apple-system, sans-serif;
-  background:#111;
-  color:#fff;
-  padding:16px;
+body {
+    margin: 0;
+    font-family: "Times New Roman", Georgia, serif;
+    background: #3b2f2f; /* leather-ish brown */
+    color: #f5f0dc;
+    padding: 20px;
 }
-.card{
-  max-width:700px;
-  margin:auto;
-  background:#1b1b1b;
-  padding:20px;
-  border-radius:16px;
+
+.card {
+    max-width: 700px;
+    margin: auto;
+    background: #5a4538;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.4);
+    border: 4px solid #3b2f2f;
 }
-h1{
-  margin-top:0;
-  font-size:24px;
+
+h1 {
+    font-family: "Georgia", serif;
+    font-size: 28px;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20px;
 }
-.scene{
-  margin-bottom:20px;
-  line-height:1.5;
+
+.scene-text {
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 20px;
 }
-h3{
-  margin-bottom:8px;
+
+button {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 14px;
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    background: #7c5a42;
+    color: #f5f0dc;
+    cursor: pointer;
+    transition: 0.2s;
 }
-button{
-  display:block;
-  width:100%;
-  margin:8px 0;
-  padding:12px;
-  border:none;
-  border-radius:10px;
-  background:#2e7d32;
-  color:white;
-  font-size:16px;
+
+button:hover {
+    background: #a17758;
 }
-button:active{
-  opacity:0.8;
+
+button:disabled {
+    background: #4b3628;
+    cursor: not-allowed;
 }
-.result{
-  margin-top:16px;
-  background:#2a2a2a;
-  padding:12px;
-  border-radius:10px;
-}
-.hidden{display:none;}
-.small{
-  font-size:14px;
-  opacity:0.8;
+
+#feedback {
+    font-size: 18px;
+    line-height: 1.6;
 }
 </style>
 </head>
 
 <body>
-
 <div class="card">
+<h1>The Adventurous Journal</h1>
 
-<h1>Goblin Chaos Adventure</h1>
+<div id="game">
+<div id="sceneText" class="scene-text"></div>
+<div id="choices"></div>
+<button id="nextBtn" class="hidden">Next</button>
+</div>
 
-<div class="scene" id="sceneText"></div>
-
-<h3>Player 1 chooses</h3>
-<div id="p1Choices"></div>
-
-<h3>Player 2 chooses</h3>
-<div id="p2Choices"></div>
-
-<div id="resultBox" class="result hidden"></div>
-
-<button id="nextBtn" class="hidden">Next Scene</button>
-
-<p class="small">
-Chaos level: cooperative goblin nonsense enabled.
-</p>
-
+<div id="feedback" class="hidden"></div>
 </div>
 
 <script>
-
+// ===== Story / Questions =====
 const scenes = [
-{
-text:"You enter a tavern where goblins argue passionately about soup ethics.",
-choices:[
-"Offer emotional support",
-"Challenge the soup to combat",
-"Start a chaotic dance",
-"Flirt with the nearest goblin"
-]
-},
-{
-text:"A dragon blocks your path and asks for relationship advice.",
-choices:[
-"Take it seriously",
-"Tell a ridiculous joke",
-"Offer a comforting hug",
-"Declare yourselves dragon consultants"
-]
-},
-{
-text:"You discover a cursed picnic basket whispering romantic poems.",
-choices:[
-"Open it carefully",
-"Kick it into a bush",
-"Sit together and listen",
-"Claim it as sacred goblin treasure"
-]
-}
+    {
+        text: "You and your partner stand at the edge of a misty forest, map in hand. How do you begin your adventure?",
+        choices: ["Charge boldly into the unknown", "Carefully plan the route together", "Take a moment to enjoy the view", "Draw symbols in the dirt for luck"]
+    },
+    {
+        text: "A river blocks your path. What do you do?",
+        choices: ["Build a raft together", "Find a shallow crossing", "Use magic / clever trick", "Sit and sing a song while brainstorming"]
+    },
+    {
+        text: "You find a mysterious ancient tome in a hidden glade. How do you handle it?",
+        choices: ["Read it carefully together", "Take it without opening", "Test a small spell inside", "Sketch it into your journal for later"]
+    },
+    {
+        text: "Night falls and the campsite needs attention. What do you do first?",
+        choices: ["Set up shelter together", "Cook a shared meal", "Stargaze and talk about dreams", "Create a playful ritual to ward off fear"]
+    },
+    {
+        text: "Your journey brings unexpected challenges. How do you maintain your connection?",
+        choices: ["Share small gifts or notes", "Play a game to lighten mood", "Have quiet moments together", "Encourage and support each other's decisions"]
+    }
 ];
 
-const outcomes = [
-"The universe approves of your chaotic teamwork.",
-"You somehow solve the problem through emotional nonsense.",
-"A narrator declares you an iconic disaster duo.",
-"The goblins cheer your combined energy."
-];
+// ===== Local storage key =====
+const STORAGE_KEY = "adventurousCoupleChoices";
 
+// ===== Variables =====
 let currentScene = 0;
-let p1Choice = null;
-let p2Choice = null;
+let playerChoices = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
-function renderScene(){
-  const s = scenes[currentScene];
+// ===== Render scene =====
+function renderScene() {
+    const scene = scenes[currentScene];
+    document.getElementById("sceneText").textContent = scene.text;
 
-  document.getElementById("sceneText").innerHTML =
-    "<strong>Scene:</strong><br>" + s.text;
+    const div = document.getElementById("choices");
+    div.innerHTML = "";
 
-  p1Choice = null;
-  p2Choice = null;
+    scene.choices.forEach(choice => {
+        const btn = document.createElement("button");
+        btn.textContent = choice;
+        btn.onclick = () => selectChoice(choice);
+        div.appendChild(btn);
+    });
 
-  buildButtons("p1Choices",1);
-  buildButtons("p2Choices",2);
-
-  document.getElementById("resultBox").classList.add("hidden");
-  document.getElementById("nextBtn").classList.add("hidden");
+    document.getElementById("nextBtn").classList.add("hidden");
 }
 
-function buildButtons(target,player){
-  const div = document.getElementById(target);
-  div.innerHTML = "";
+// ===== Handle choice =====
+function selectChoice(choice) {
+    playerChoices[currentScene] = choice;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(playerChoices));
+    
+    // Disable buttons after choice
+    const buttons = document.querySelectorAll("#choices button");
+    buttons.forEach(b => b.disabled = true);
 
-  scenes[currentScene].choices.forEach(choice=>{
-    const btn = document.createElement("button");
-    btn.textContent = choice;
-
-    btn.onclick = ()=>{
-      if(player===1) p1Choice = choice;
-      else p2Choice = choice;
-
-      checkBothChosen();
-    };
-
-    div.appendChild(btn);
-  });
+    document.getElementById("nextBtn").classList.remove("hidden");
 }
 
-function checkBothChosen(){
-  if(!p1Choice || !p2Choice) return;
-
-  const result = document.getElementById("resultBox");
-  result.classList.remove("hidden");
-
-  const randomOutcome =
-    outcomes[Math.floor(Math.random()*outcomes.length)];
-
-  result.innerHTML =
-    "<strong>Choices:</strong><br>" +
-    "Player 1: " + p1Choice + "<br>" +
-    "Player 2: " + p2Choice + "<br><br>" +
-    randomOutcome;
-
-  document.getElementById("nextBtn")
-    .classList.remove("hidden");
-}
-
-document.getElementById("nextBtn").onclick = ()=>{
-  currentScene++;
-  if(currentScene >= scenes.length){
-    currentScene = 0;
-  }
-  renderScene();
+// ===== Next scene =====
+document.getElementById("nextBtn").onclick = () => {
+    currentScene++;
+    if (currentScene >= scenes.length) {
+        showFeedback();
+    } else {
+        renderScene();
+    }
 };
 
+// ===== Show feedback =====
+function showFeedback() {
+    document.getElementById("game").classList.add("hidden");
+    const feedbackDiv = document.getElementById("feedback");
+    feedbackDiv.classList.remove("hidden");
+
+    let html = "<h2>Your Adventure Journal</h2>";
+
+    playerChoices.forEach((choice, idx) => {
+        html += `<p><strong>Scene ${idx+1}:</strong> ${scenes[idx].text}<br>`;
+        html += `<em>Your choice:</em> ${choice}</p>`;
+    });
+
+    // Simple assessment logic
+    html += "<p><strong>Reflection:</strong> Your adventure shows that you approach life together with a mix of daring, careful planning, creativity, and playfulness. Keep exploring and supporting each other—you are a truly adventurous couple!</p>";
+
+    feedbackDiv.innerHTML = html;
+
+    // Clear stored choices to allow replay
+    localStorage.removeItem(STORAGE_KEY);
+}
+
+// ===== Initial render =====
 renderScene();
-
 </script>
-
 </body>
 </html>
