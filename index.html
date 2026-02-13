@@ -6,55 +6,54 @@
 <title>Relationship Eliminator</title>
 <style>
 body {
-    margin: 0;
-    font-family: "Georgia", serif;
-    background: #2c003e;
-    color: #f2e6ff;
-    padding: 0;
+  margin: 0;
+  font-family: "Georgia", serif;
+  background: #2c003e;
+  color: #f2e6ff;
 }
 .card {
-    max-width: 720px;
-    margin: 50px auto;
-    background: #4b0073;
-    padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 0 40px rgba(0,0,0,0.6);
-    border: 4px solid #1f0026;
-    text-align: center;
+  max-width: 720px;
+  margin: 50px auto;
+  background: #4b0073;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 0 40px rgba(0,0,0,0.6);
+  border: 4px solid #1f0026;
+  text-align: center;
 }
 h1 {
-    font-size: 36px;
-    margin-bottom: 20px;
+  font-size: 36px;
+  margin-bottom: 20px;
 }
 p.description {
-    font-size: 18px;
-    margin-bottom: 40px;
+  font-size: 18px;
+  margin-bottom: 40px;
 }
 button {
-    display: block;
-    width: 100%;
-    margin: 10px 0;
-    padding: 16px;
-    font-size: 18px;
-    border: none;
-    border-radius: 12px;
-    background: #9b00d0;
-    color: #fff;
-    cursor: pointer;
-    transition: 0.2s;
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 16px;
+  font-size: 18px;
+  border: none;
+  border-radius: 12px;
+  background: #9b00d0;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.2s;
 }
 button:hover {
-    background: #c45ce0;
+  background: #c45ce0;
 }
 .progress {
-    font-size: 14px;
-    color: #f2dfff;
-    margin-bottom: 20px;
+  font-size: 14px;
+  color: #f2dfff;
+  margin-bottom: 20px;
 }
 .scene-text {
-    font-size: 20px;
-    line-height: 1.6;
-    margin-bottom: 20px;
+  font-size: 20px;
+  line-height: 1.6;
+  margin-bottom: 20px;
 }
 .hidden { display: none; }
 </style>
@@ -64,7 +63,7 @@ button:hover {
 <!-- Cover Page -->
 <div class="card" id="cover">
 <h1>Relationship Eliminator</h1>
-<p class="description">Welcome, lovebirds! Pick one option each round. We’ll see what you really love about each other’s physical closeness. Snarky commentary included for free.</p>
+<p class="description">A carefully designed journey into your preferences as a couple. Pick one option each round, discover your physical intimacy patterns, and generate insights to improve closeness.</p>
 <button id="startBtn">Start</button>
 </div>
 
@@ -79,19 +78,32 @@ button:hover {
 <div class="card hidden" id="feedback"></div>
 
 <script>
-// ===== Question Bank =====
+// ===== Full Question Bank =====
 const questionBank = [
-    {category:"physical", option1:"Hugs", option2:"Cuddles"},
-    {category:"physical", option1:"Kisses", option2:"Holding hands"},
-    {category:"physical", option1:"Back rubs", option2:"Foot rubs"},
-    {category:"physical", option1:"Morning snuggles", option2:"Evening cuddles"},
-    {category:"physical", option1:"Tickling", option2:"Soft caresses"},
-    {category:"fun", option1:"Play games together", option2:"Go on adventures"},
-    {category:"fun", option1:"Cook together", option2:"Movie nights"},
-    {category:"emotional", option1:"Talk about feelings", option2:"Write love notes"},
-    {category:"communication", option1:"Discuss conflicts immediately", option2:"Take time to cool off"},
-    {category:"communication", option1:"Use humor", option2:"Use gentle words"}
-    // Add more options to reach ~50 questions
+  // Physical intimacy (main focus)
+  {category:"physical", option1:"Hugs", option2:"Cuddles"},
+  {category:"physical", option1:"Kisses", option2:"Holding hands"},
+  {category:"physical", option1:"Back rubs", option2:"Foot rubs"},
+  {category:"physical", option1:"Morning snuggles", option2:"Evening cuddles"},
+  {category:"physical", option1:"Tickling", option2:"Soft caresses"},
+  {category:"physical", option1:"Sitting close on the couch", option2:"Lying together in bed"},
+  {category:"physical", option1:"Light kisses on the cheek", option2:"Deep passionate kisses"},
+  {category:"physical", option1:"Holding hands while walking", option2:"Arm around each other"},
+  {category:"physical", option1:"Playful wrestling", option2:"Gentle caressing"},
+  {category:"physical", option1:"Shoulder massage", option2:"Neck massage"},
+  {category:"physical", option1:"Sharing a bath/shower", option2:"Snuggling under a blanket"},
+  {category:"physical", option1:"Surprise kisses", option2:"Morning hugs"},
+  {category:"physical", option1:"Back tickles", option2:"Hair strokes"},
+  {category:"physical", option1:"Hand-holding in public", option2:"Private cuddles"},
+  {category:"physical", option1:"Hug before sleep", option2:"Hug after waking"},
+  
+  // Emotional & playful (to mix categories)
+  {category:"emotional", option1:"Talk about feelings", option2:"Share a memory"},
+  {category:"emotional", option1:"Write a note for partner", option2:"Send a sweet text"},
+  {category:"fun", option1:"Cook together", option2:"Play board games"},
+  {category:"fun", option1:"Movie night", option2:"Outdoor adventure"},
+  {category:"communication", option1:"Discuss conflicts immediately", option2:"Take time to reflect"},
+  {category:"communication", option1:"Use gentle tone", option2:"Use humour"},
 ];
 
 // ===== Variables =====
@@ -101,74 +113,74 @@ let answers = {physical:[], fun:[], emotional:[], communication:[]};
 
 // ===== Start Game =====
 document.getElementById("startBtn").onclick = () => {
-    document.getElementById("cover").classList.add("hidden");
-    document.getElementById("game").classList.remove("hidden");
+  document.getElementById("cover").classList.add("hidden");
+  document.getElementById("game").classList.remove("hidden");
 
-    // Randomise 50 questions (repeat some if bank <50)
-    while(questions.length < 50) {
-        const q = questionBank[Math.floor(Math.random()*questionBank.length)];
-        questions.push(q);
-    }
-
-    renderQuestion();
+  // Randomize 50 questions from bank, allow repeats if bank <50
+  while(questions.length < 50) {
+    const q = questionBank[Math.floor(Math.random()*questionBank.length)];
+    questions.push(q);
+  }
+  renderQuestion();
 };
 
 // ===== Render Question =====
 function renderQuestion() {
-    const q = questions[currentIndex];
-    document.getElementById("progressText").textContent = `Question ${currentIndex+1} of ${questions.length}`;
-    document.getElementById("sceneText").textContent = q.category === "physical" ? "Physical intimacy choice:" : "Pick your preference:";
+  const q = questions[currentIndex];
+  document.getElementById("progressText").textContent = `Question ${currentIndex+1} of ${questions.length}`;
+  document.getElementById("sceneText").textContent = q.category === "physical" ? "Choose one physical intimacy preference:" : "Pick your preference:";
 
-    const choicesDiv = document.getElementById("choices");
-    choicesDiv.innerHTML = "";
+  const choicesDiv = document.getElementById("choices");
+  choicesDiv.innerHTML = "";
 
-    const btn1 = document.createElement("button");
-    btn1.textContent = q.option1;
-    btn1.onclick = () => selectAnswer(q, q.option1);
-    choicesDiv.appendChild(btn1);
+  const btn1 = document.createElement("button");
+  btn1.textContent = q.option1;
+  btn1.onclick = () => selectAnswer(q, q.option1);
+  choicesDiv.appendChild(btn1);
 
-    const btn2 = document.createElement("button");
-    btn2.textContent = q.option2;
-    btn2.onclick = () => selectAnswer(q, q.option2);
-    choicesDiv.appendChild(btn2);
+  const btn2 = document.createElement("button");
+  btn2.textContent = q.option2;
+  btn2.onclick = () => selectAnswer(q, q.option2);
+  choicesDiv.appendChild(btn2);
 }
 
 // ===== Handle Answer =====
 function selectAnswer(q, choice) {
-    answers[q.category].push(choice);
-    currentIndex++;
-    if(currentIndex >= questions.length) { showFeedback(); }
-    else { renderQuestion(); }
+  answers[q.category].push(choice);
+  currentIndex++;
+  if(currentIndex >= questions.length) { showFeedback(); }
+  else { renderQuestion(); }
 }
 
 // ===== Feedback =====
 function showFeedback() {
-    document.getElementById("game").classList.add("hidden");
-    const fb = document.getElementById("feedback");
-    fb.classList.remove("hidden");
+  document.getElementById("game").classList.add("hidden");
+  const fb = document.getElementById("feedback");
+  fb.classList.remove("hidden");
 
-    let html = "<h1>Relationship Eliminator Report</h1>";
-    html += "<h2>Physical Intimacy Insights</h2>";
-    if(answers.physical.length) {
-        const counts = {};
-        answers.physical.forEach(a=> counts[a] = (counts[a]||0)+1);
-        const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
-        html += "<p>Most loved: "+sorted.map(e=>e[0]+" ("+e[1]+")").join(", ")+"</p>";
-    } else { html += "<p>No physical intimacy choices selected. Someone was shy, huh?</p>"; }
+  let html = "<h1>Relationship Eliminator Report</h1>";
+  html += "<h2>Physical Intimacy Insights</h2>";
+  if(answers.physical.length) {
+    const counts = {};
+    answers.physical.forEach(a=> counts[a] = (counts[a]||0)+1);
+    const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+    html += "<p>Most chosen preferences: "+sorted.map(e=>e[0]+" ("+e[1]+")").join(", ")+"</p>";
+  } else { html += "<p>No physical intimacy choices recorded.</p>"; }
 
-    html += "<h2>Suggestions</h2>";
-    html += "<p>Based on your choices, focus on doing more of what you both enjoy physically. Mix it up, try new things, and remember: consent and comfort first, snark second.</p>";
-    html += `<p><strong>Export via email:</strong><br><a href="mailto:?subject=Relationship Eliminator Report&body=${encodeURIComponent(generateEmailText())}">Send Email</a></p>`;
+  html += "<h2>Suggestions</h2>";
+  html += "<p>Focus on doing more of what you both enjoy physically. Mix things up, communicate preferences, and create shared moments of closeness.</p>";
 
-    fb.innerHTML = html;
+  html += `<p><strong>Export via email:</strong><br><a href="mailto:?subject=Relationship Eliminator Report&body=${encodeURIComponent(generateEmailText())}">Send Email</a></p>`;
+
+  fb.innerHTML = html;
 }
 
 // ===== Email Text =====
 function generateEmailText() {
-    let text = "Hi,\n\nHere's what we picked in the Relationship Eliminator:\n\nPhysical intimacy preferences:\n";
-    answers.physical.forEach(a=> text += "- "+a+"\n");
-    text += "\nSuggestions: Focus on shared physical activities you both love.\n\nLove,\n[Your Name]";
-    return text;
+  let text = "Hi,\n\nHere's what we picked in the Relationship Eliminator:\n\nPhysical intimacy preferences:\n";
+  answers.physical.forEach(a=> text += "- "+a+"\n");
+  text += "\nSuggestions: Focus on shared physical activities you both love.\n\nLove,\n[Your Name]";
+  return text;
 }
 </script>
 </body>
