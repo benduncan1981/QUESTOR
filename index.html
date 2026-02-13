@@ -3,246 +3,183 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Relationship Reflection Journal</title>
+<title>Relationship Reflection: Snarky Edition</title>
 <style>
 body {
     margin: 0;
-    font-family: "Georgia", "Times New Roman", serif;
-    background: #3b2f2f;
-    color: #f5f0dc;
-    padding: 20px;
+    font-family: "Georgia", serif;
+    background: #2c003e;
+    color: #f2e6ff;
+    padding: 0;
 }
 .card {
     max-width: 720px;
-    margin: auto;
-    background: #5a4538;
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: inset 0 0 30px rgba(0,0,0,0.4);
-    border: 4px solid #3b2f2f;
+    margin: 50px auto;
+    background: #4b0073;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.6);
+    border: 4px solid #1f0026;
 }
 h1 {
-    font-family: "Georgia", serif;
-    font-size: 28px;
+    font-size: 36px;
     text-align: center;
-    margin-top: 0;
     margin-bottom: 20px;
 }
-.scene-text {
+p.description {
     font-size: 18px;
-    line-height: 1.6;
-    margin-bottom: 20px;
+    text-align: center;
+    margin-bottom: 40px;
 }
 button {
     display: block;
     width: 100%;
     margin: 10px 0;
-    padding: 14px;
-    font-size: 16px;
+    padding: 16px;
+    font-size: 18px;
     border: none;
-    border-radius: 10px;
-    background: #7c5a42;
-    color: #f5f0dc;
+    border-radius: 12px;
+    background: #9b00d0;
+    color: #fff;
     cursor: pointer;
     transition: 0.2s;
 }
 button:hover {
-    background: #a17758;
+    background: #c45ce0;
 }
-button:disabled {
-    background: #4b3628;
-    cursor: not-allowed;
+button.selected {
+    background: #ff77ff;
+    color: #2c003e;
 }
-input[type="text"], textarea {
-    width: 100%;
-    padding: 10px;
-    margin: 5px 0 15px 0;
-    border-radius: 6px;
-    border: 1px solid #a17758;
-    background: #7c5a42;
-    color: #f5f0dc;
-    font-family: Georgia, serif;
+.progress {
+    font-size: 14px;
+    color: #f2dfff;
+    margin-bottom: 20px;
+    text-align: center;
 }
-textarea { resize: vertical; }
-#feedback { font-size: 18px; line-height: 1.6; }
-.progress { font-size: 14px; color: #f5f0dc; margin-bottom: 10px; }
+.scene-text {
+    font-size: 20px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    text-align: center;
+}
+.hidden { display: none; }
 </style>
 </head>
 <body>
-<div class="card">
-<h1>Relationship Reflection Journal</h1>
 
-<div id="game">
+<div class="card" id="cover">
+<h1>Relationship Reflection: Snarky Edition</h1>
+<p class="description">A brutally honest, slightly sarcastic journey into our relationship. Pick the things that apply, and see how much you really know about each other. Love, hate, and everything in between.</p>
+<button id="startBtn">Start</button>
+</div>
+
+<div class="card hidden" id="game">
 <p class="progress" id="progressText"></p>
-<div id="sceneText" class="scene-text"></div>
+<div class="scene-text" id="sceneText"></div>
 <div id="choices"></div>
-<button id="nextBtn" class="hidden">Next</button>
+<button id="submitBtn" class="hidden">Submit</button>
 </div>
 
-<div id="feedback" class="hidden"></div>
-</div>
+<div class="card hidden" id="feedback"></div>
 
 <script>
-// ===== Questions (50+) =====
+// ===== Questions =====
 const questions = [
-  // Likes & Appreciation
-  {id:"likes1", text:"What makes you feel most appreciated?", type:"multi", options:["Compliments","Acts of service","Quality time","Small gifts","Other"], tags:["appreciation"]},
-  {id:"likes2", text:"Which gestures of affection make you happiest?", type:"multi", options:["Hugs","Holding hands","Cuddling","Kisses","Other"], tags:["affection"]},
-  {id:"likes3", text:"Which shared activities bring the most joy?", type:"multi", options:["Adventure / outdoors","Quiet evenings","Playing games","Cooking together","Other"], tags:["fun"]},
-  {id:"likes4", text:"When do you feel closest to your partner?", type:"text", tags:["emotional"]},
-  {id:"likes5", text:"What words or phrases make you feel loved?", type:"text", tags:["communication"]},
-  
-  // Dislikes & Frustrations
-  {id:"dislikes1", text:"Which behaviours of your partner frustrate you?", type:"multi", options:["Interrupting","Criticism","Forgetfulness","Not listening","Other"], tags:["frustration"]},
-  {id:"dislikes2", text:"What moments cause tension or stress?", type:"multi", options:["Chores","Plans changing","Miscommunication","Busy schedules","Other"], tags:["frustration"]},
-  {id:"dislikes3", text:"Patterns in yourself you’d like to change?", type:"text", tags:["personalGrowth"]},
-  {id:"dislikes4", text:"How do you usually react when frustrated?", type:"single", options:["Speak up immediately","Withdraw","Become defensive","Other"], tags:["communication"]},
-  
-  // Communication & Conflict
-  {id:"comm1", text:"Preferred way to discuss conflicts?", type:"single", options:["Talk immediately","Take time and reflect","Use playful/gentle tone","Other"], tags:["communication"]},
-  {id:"comm2", text:"Do you like structured check-ins or spontaneous talks?", type:"single", options:["Structured","Spontaneous","Depends on situation","Other"], tags:["communication"]},
-  {id:"comm3", text:"Do you feel heard during discussions?", type:"single", options:["Always","Sometimes","Rarely","Other"], tags:["communication"]},
-  {id:"comm4", text:"How do you feel after resolving conflicts?", type:"multi", options:["Relieved","Connected","Still tense","Other"], tags:["emotional"]},
-  {id:"comm5", text:"What helps you calm down after a disagreement?", type:"text", tags:["emotional"]},
-  
-  // Emotional Needs & Intimacy
-  {id:"intimacy1", text:"What types of physical affection do you enjoy most?", type:"multi", options:["Hugs","Holding hands","Cuddling","Kisses","Other"], tags:["affection"]},
-  {id:"intimacy2", text:"Which emotional needs are most important to you?", type:"multi", options:["Validation","Understanding","Support","Quality time","Other"], tags:["emotional"]},
-  {id:"intimacy3", text:"How do you prefer to receive love or reassurance?", type:"single", options:["Words","Touch","Acts of service","Other"], tags:["communication"]},
-  {id:"intimacy4", text:"What gestures make you feel closest to your partner?", type:"text", tags:["emotional"]},
-  {id:"intimacy5", text:"How often do you want physical affection?", type:"single", options:["Frequently","Sometimes","Rarely","Other"], tags:["affection"]},
-  
-  // Fun, Playfulness & Adventure
-  {id:"fun1", text:"What activities do you want more of together?", type:"multi", options:["Adventure / outdoors","Games","Cooking","Hobbies","Other"], tags:["fun"]},
-  {id:"fun2", text:"What activities do you want less of together?", type:"multi", options:["Chores","TV/Screen time","Errands","Other"], tags:["fun"]},
-  {id:"fun3", text:"Moments that make you feel playful or silly?", type:"text", tags:["fun"]},
-  {id:"fun4", text:"How important is spontaneity in your relationship?", type:"single", options:["Very","Moderate","Not much","Other"], tags:["fun"]},
-  
-  // Personal Reflection & Growth
-  {id:"growth1", text:"Habits you want to improve?", type:"text", tags:["personalGrowth"]},
-  {id:"growth2", text:"What have you learned about yourself in this relationship?", type:"text", tags:["reflection"]},
-  {id:"growth3", text:"How do you want to grow together as a couple?", type:"text", tags:["reflection"]},
-  {id:"growth4", text:"What would you like to share with your partner about yourself?", type:"text", tags:["reflection"]},
-  
-  // Add more questions to reach 50+...
+  {id:"q1", text:"What makes you feel appreciated?", options:["Compliments","Acts of service","Quality time","Small gifts","Cuddles"], tags:["appreciation"]},
+  {id:"q2", text:"Behaviours of your partner that annoy you?", options:["Interrupting","Criticism","Forgetfulness","Ignoring me","Other weird stuff"], tags:["frustration"]},
+  {id:"q3", text:"Fun stuff you enjoy together?", options:["Adventure / outdoors","Quiet evenings","Playing games","Cooking","Movie nights"], tags:["fun"]},
+  {id:"q4", text:"How do you like to communicate?", options:["Talk immediately","Take time","Use sarcasm","Other"], tags:["communication"]},
+  {id:"q5", text:"Physical affection you enjoy?", options:["Hugs","Holding hands","Cuddles","Kisses","Other"], tags:["affection"]},
+  {id:"q6", text:"Things you want more of?", options:["Adventures","Playfulness","Support","Romance","Other"], tags:["growth"]},
+  {id:"q7", text:"Things you want less of?", options:["Nagging","Chores","Stress","Screen time","Other"], tags:["growth"]}
+  // expand up to 50+ questions
 ];
 
 // ===== Variables =====
 let currentIndex = 0;
-let answers = JSON.parse(localStorage.getItem("relationshipReflection")) || {};
+let selectedOptions = [];
+let answers = JSON.parse(localStorage.getItem("relationshipSnarky")) || {};
 
-// ===== Render Scene =====
-function renderScene() {
-  const q = questions[currentIndex];
-  const sceneDiv = document.getElementById("sceneText");
-  const choicesDiv = document.getElementById("choices");
-  const progressText = document.getElementById("progressText");
-  
-  progressText.textContent = `Question ${currentIndex+1} of ${questions.length}`;
-  sceneDiv.textContent = q.text;
-  choicesDiv.innerHTML = "";
-
-  if (q.type === "multi" || q.type === "single") {
-    q.options.forEach(opt => {
-      const btn = document.createElement("button");
-      btn.textContent = opt;
-      btn.onclick = () => selectChoice(opt, q.type);
-      choicesDiv.appendChild(btn);
-    });
-    if (q.options.includes("Other")) {
-      const input = document.createElement(q.type === "multi" ? "textarea" : "input");
-      input.placeholder = "Write your own...";
-      input.id = "otherInput";
-      choicesDiv.appendChild(input);
-    }
-  } else if (q.type === "text") {
-    const textarea = document.createElement("textarea");
-    textarea.id = "textInput";
-    textarea.placeholder = "Write your answer...";
-    choicesDiv.appendChild(textarea);
-  }
-
-  document.getElementById("nextBtn").classList.add("hidden");
-}
-
-// ===== Handle Choice =====
-function selectChoice(choice, type) {
-  const q = questions[currentIndex];
-  if (type === "single") {
-    answers[q.id] = choice === "Other" ? document.getElementById("otherInput").value || "Other" : choice;
-  } else if (type === "multi") {
-    if (!answers[q.id]) answers[q.id] = [];
-    if (choice === "Other") {
-      const val = document.getElementById("otherInput").value;
-      if (val && !answers[q.id].includes(val)) answers[q.id].push(val);
-    } else if (!answers[q.id].includes(choice)) answers[q.id].push(choice);
-  }
-  localStorage.setItem("relationshipReflection", JSON.stringify(answers));
-  document.getElementById("nextBtn").classList.remove("hidden");
-  const buttons = document.querySelectorAll("#choices button");
-  buttons.forEach(b => b.disabled = true);
-}
-
-// ===== Next Button =====
-document.getElementById("nextBtn").onclick = () => {
-  currentIndex++;
-  if (currentIndex >= questions.length) {
-    showFeedback();
-  } else {
-    renderScene();
-  }
+// ===== Cover Page =====
+document.getElementById("startBtn").onclick = () => {
+  document.getElementById("cover").classList.add("hidden");
+  document.getElementById("game").classList.remove("hidden");
+  renderQuestion();
 };
 
-// ===== Generate Feedback =====
+// ===== Render Question =====
+function renderQuestion() {
+  selectedOptions = [];
+  const q = questions[currentIndex];
+  document.getElementById("progressText").textContent = `Question ${currentIndex+1} of ${questions.length}`;
+  document.getElementById("sceneText").textContent = q.text;
+
+  const choicesDiv = document.getElementById("choices");
+  choicesDiv.innerHTML = "";
+  q.options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.textContent = opt;
+    btn.onclick = () => toggleSelection(btn, opt);
+    choicesDiv.appendChild(btn);
+  });
+
+  document.getElementById("submitBtn").classList.remove("hidden");
+}
+
+// ===== Toggle Selection =====
+function toggleSelection(button, option) {
+  if (selectedOptions.includes(option)) {
+    selectedOptions = selectedOptions.filter(o => o !== option);
+    button.classList.remove("selected");
+  } else {
+    selectedOptions.push(option);
+    button.classList.add("selected");
+  }
+}
+
+// ===== Submit Button =====
+document.getElementById("submitBtn").onclick = () => {
+  if (selectedOptions.length === 0) { alert("Pick at least one, genius."); return; }
+  answers[questions[currentIndex].id] = [...selectedOptions];
+  localStorage.setItem("relationshipSnarky", JSON.stringify(answers));
+  currentIndex++;
+  if (currentIndex >= questions.length) { showFeedback(); }
+  else { renderQuestion(); }
+};
+
+// ===== Feedback =====
 function showFeedback() {
   document.getElementById("game").classList.add("hidden");
   const feedbackDiv = document.getElementById("feedback");
   feedbackDiv.classList.remove("hidden");
 
-  let html = "<h2>Your Reflection Report</h2>";
-
+  let html = "<h1>Snarky Reflection Report</h1>";
   questions.forEach(q => {
     html += `<p><strong>${q.text}</strong><br>`;
-    const ans = answers[q.id];
-    if (Array.isArray(ans)) html += ans.join(", ");
-    else html += ans || "No response";
+    html += answers[q.id].join(", ");
     html += "</p>";
   });
 
-  html += "<h3>Insights & Suggestions</h3>";
-  html += "<p><strong>Strengths:</strong> ";
-  if (answers.likes1 || answers.likes2 || answers.fun1) html += "You value appreciation, playfulness, and shared experiences. ";
-  html += "</p>";
+  html += "<h2>Insights & Suggestions</h2>";
+  html += "<p><strong>Strengths:</strong> You clearly appreciate each other and have fun together. Keep it spicy.</p>";
+  html += "<p><strong>Areas to Improve:</strong> Watch out for annoying habits, nagging, and stress. Maybe talk it out before things explode.</p>";
 
-  html += "<p><strong>Areas to Improve:</strong> ";
-  if (answers.dislikes1 || answers.comm1 || answers.growth1) html += "Consider addressing frustrations, improving communication, and focusing on personal growth. ";
-  html += "</p>";
-
-  html += `<p><strong>Export via email:</strong><br>`;
-  html += `<a href="mailto:?subject=My Relationship Reflection&body=${encodeURIComponent(generateEmailText())}">Send Email</a></p>`;
+  html += `<p><strong>Export via email:</strong><br><a href="mailto:?subject=My Relationship Reflection&body=${encodeURIComponent(generateEmailText())}">Send Email</a></p>`;
 
   feedbackDiv.innerHTML = html;
-  localStorage.removeItem("relationshipReflection");
+  localStorage.removeItem("relationshipSnarky");
 }
 
-// ===== Generate Email Text =====
+// ===== Email Text =====
 function generateEmailText() {
-  let text = "Hi,\n\nI've completed a reflection on our relationship:\n\nStrengths:\n";
-  if (answers.likes1) text += `- Appreciation: ${Array.isArray(answers.likes1)?answers.likes1.join(", "):answers.likes1}\n`;
-  if (answers.fun1) text += `- Fun/playfulness: ${Array.isArray(answers.fun1)?answers.fun1.join(", "):answers.fun1}\n`;
-
-  text += "\nAreas to Improve:\n";
-  if (answers.dislikes1) text += `- Frustrations: ${Array.isArray(answers.dislikes1)?answers.dislikes1.join(", "):answers.dislikes1}\n`;
-  if (answers.comm1) text += `- Communication: ${answers.comm1}\n`;
-  if (answers.growth1) text += `- Personal Growth: ${answers.growth1}\n`;
-
-  if (answers.partner_reflection) text += `\nOther reflections:\n- ${answers.partner_reflection}\n`;
+  let text = "Hi,\n\nHere's what I picked during this snarky reflection:\n\nStrengths:\n";
+  for (let q of questions) {
+    text += `- ${q.text}: ${answers[q.id].join(", ")}\n`;
+  }
   text += "\nLove,\n[Your Name]";
   return text;
 }
-
-// ===== Initial Render =====
-renderScene();
 </script>
 </body>
 </html>
